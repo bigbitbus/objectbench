@@ -18,15 +18,16 @@ class Exercizer(object):
     def __init__(self):
         self.resetTimer()
 
-    def makeRandomBinFiles (self, outdir='/tmp/smalldir', numFiles=10, 
+    def makeRandomBinFiles (self, outDir='/tmp/smalldir', numFiles=10, 
         minSizekb=1, maxSizekb = 1000001):
         if not exists(outDir):
             os.makedirs(outDir)
+        ctr = 1
         while ctr <= numFiles:
             try:
                 fileSize = max( 1, ctr * (maxSizekb - minSizekb)/numFiles)
-                with open(join(outdir,'file_'+ str(fileSize)), 'wb') as fout:
-                    fout.write(os.urandom(fileSize)) 
+                with open(join(outDir,'file_'+ str(fileSize)), 'wb') as fout:
+                    fout.write(os.urandom(fileSize*1000)) 
                 ctr = ctr + 1
             except:
                 print "Error creating random files"
