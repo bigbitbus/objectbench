@@ -13,8 +13,9 @@
   # limitations under the License.
 
 import os, sys, time
-from os.path import join, getsize
+from os.path import join, getsize, exists
 from azure.storage.blob import BlockBlobService
+from pprint import pprint
 from exercizer import Exercizer
 
 class AzureExercizer(Exercizer):
@@ -49,6 +50,8 @@ class AzureExercizer(Exercizer):
         return self.storage_client.list_blobs(container_name)
         
     def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
+        if not exists(localDir):
+            os.makedirs(localDir)
         dic_downloadData = {}
         self.startTimer()
         blobListGenerator = self.ListObjectsInContainer(container_name)
@@ -76,8 +79,8 @@ if __name__=="__main__":
 
     azex = AzureExercizer(env_credentials)
     # Upload
-    print azex.UploadObjectsToContainer()
+    pprint(azex.UploadObjectsToContainer())
     # Download
-    print azex.DownloadObjectsFromContainer()
+    pprint(azex.DownloadObjectsFromContainer())
     # Delete
-    print azex.DeleteContainer()
+    pprint(azex.DeleteContainer())

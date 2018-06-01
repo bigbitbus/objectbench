@@ -13,7 +13,7 @@
   # limitations under the License.
 
 import os, sys, time
-from os.path import join, getsize
+from os.path import join, getsize, exists
 import boto3, botocore
 from botocore.client import ClientError
 from exercizer import Exercizer
@@ -23,10 +23,15 @@ from pprint import pprint
 class AWSExercizer(Exercizer):
     def __init__(self, region_name ='us-east-1'):
         Exercizer.__init__(self)
-        self.storage_client = boto3.client('s3',
-            aws_access_key_id = os.environ.get(env_credentials['account']), 
-            aws_secret_access_key = os.environ.get(env_credentials['secret']),
-            region_name=region_name)
+        if region_name == 'us-east-1': # aws quirk - you can't specify us-east-1 explicitly
+            self.storage_client = boto3.client('s3',
+                aws_access_key_id = os.environ.get(env_credentials['account']), 
+                aws_secret_access_key = os.environ.get(env_credentials['secret']))
+        else:
+            self.storage_client = boto3.client('s3',
+                aws_access_key_id = os.environ.get(env_credentials['account']), 
+                aws_secret_access_key = os.environ.get(env_credentials['secret']),
+                region_name=region_name)
         self.region_name = region_name
             
 
@@ -35,11 +40,14 @@ class AWSExercizer(Exercizer):
         try:
             self.storage_client.head_bucket(Bucket=container_name)
         except ClientError: 
-            container = self.storage_client.create_bucket(
-                Bucket=container_name,
-                CreateBucketConfiguration={
-                    'LocationConstraint': self.region_name
-                })
+            if self.region_name != 'us-east-1':
+                container = self.storage_client.create_bucket(
+                    Bucket=container_name,
+                    CreateBucketConfiguration={
+                        'LocationConstraint': self.region_name
+                    })
+            else:
+                 container = self.storage_client.create_bucket(Bucket=container_name)
 
         dic_uploadData = {}
         for root, dirs, files in os.walk(localDir):
@@ -63,6 +71,8 @@ class AWSExercizer(Exercizer):
         return self.storage_client.list_objects_v2(Bucket=container_name)['Contents']
         
     def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
+        if not exists(localDir):
+            os.makedirs(localDir)
         dic_downloadData = {}
         self.startTimer()
         blobList = self.ListObjectsInContainer(container_name)
@@ -91,10 +101,13 @@ if __name__=="__main__":
         'account': 'S3KEY', 
         'secret':'S3SECRET'
     }
-    awsex = AWSExercizer('us-east-1')
+    awsex = AWSExercizer()
     # Upload
-    pprint (awsex.UploadObjectsToContainer())
+    print "Upload objects"
+    pprint(awsex.UploadObjectsToContainer())
     # Download
-    pprint (awsex.DownloadObjectsFromContainer())
+    print "Download objects"
+    pprint(awsex.DownloadObjectsFromContainer())
     # Delete
-    pprint (awsex.DeleteContainer())
+    print "Delete buckets"
+    pprint(awsex.DeleteContainer())

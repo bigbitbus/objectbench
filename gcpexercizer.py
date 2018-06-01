@@ -13,8 +13,9 @@
   # limitations under the License.
 
 import os, sys, time
-from os.path import join, getsize
+from os.path import join, getsize, exists
 import google.cloud.storage
+from pprint import pprint
 from exercizer import Exercizer
 from traceback import format_exc
 class GCPExercizer(Exercizer):
@@ -58,6 +59,8 @@ class GCPExercizer(Exercizer):
         return bucket.list_blobs()
         
     def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
+        if not exists(localDir):
+            os.makedirs(localDir)
         dic_downloadData = {}
         self.startTimer()
         blobListGenerator = self.ListObjectsInContainer(container_name)
@@ -87,8 +90,8 @@ if __name__=="__main__":
 
     gcpex = GCPExercizer()
     # Upload
-    print gcpex.UploadObjectsToContainer()
+    pprint(gcpex.UploadObjectsToContainer())
     # Download
-    print gcpex.DownloadObjectsFromContainer()
+    pprint(gcpex.DownloadObjectsFromContainer())
     # Delete
-    print gcpex.DeleteContainer()
+    pprint(gcpex.DeleteContainer())
