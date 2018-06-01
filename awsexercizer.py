@@ -17,7 +17,7 @@ class AWSExercizer(Exercizer):
             
 
     def UploadObjectsToContainer(self, container_name='blobtester', localDir = '/tmp/smalldir'):
-        # create bucket if it doesnt exist
+        # create bucket if it does not exist
         try:
             self.storage_client.head_bucket(Bucket=container_name)
         except ClientError: 

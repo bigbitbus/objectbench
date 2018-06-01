@@ -4,13 +4,18 @@ import google.cloud.storage
 from exercizer import Exercizer
 from traceback import format_exc
 class GCPExercizer(Exercizer):
-    def __init__(self):
+    def __init__(self, region_name = 'northamerica-northeast1', storage_class = 'REGIONAL'):
         Exercizer.__init__(self)
         self.storage_client = google.cloud.storage.Client()
+        self.region_name = region_name
+        self.storage_class = storage_class
 
     def UploadObjectsToContainer(self, container_name='blobtester', localDir = '/tmp/smalldir'):
         try:
-            container = self.storage_client.create_bucket(container_name)
+            container = self.storage_client.bucket(container_name)
+            container.location = self.region_name
+            container.storage_class = self.storage_class
+            container.create()
         except google.cloud.exceptions.Conflict:
             print "Bucket exists, continuing"
             container = self.storage_client.get_bucket(container_name)
