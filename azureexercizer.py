@@ -6,19 +6,19 @@ from exercizer import Exercizer
 class AzureExercizer(Exercizer):
     def __init__(self, env_credentials):
         Exercizer.__init__(self)
-        self.blob_service = BlockBlobService(
+        self.storage_client = BlockBlobService(
             os.environ.get(env_credentials['account']), 
             os.environ.get(env_credentials['secret']))
 
     def UploadObjectsToContainer(self, container_name='blobtester', localDir = '/tmp/smalldir'):
-        self.blob_service.create_container(container_name)
+        self.storage_client.create_container(container_name)
         dic_uploadData = {}
         for root, dirs, files in os.walk(localDir):
             for name in files:
                 filePath = join(root,name)
                 self.startTimer()
                 try:
-                    self.blob_service.create_blob_from_path(container_name, 
+                    self.storage_client.create_blob_from_path(container_name, 
                         name, filePath)
                     dic_uploadData[filePath] = (self.endTimer(), getsize(filePath))
                 except:
@@ -32,7 +32,7 @@ class AzureExercizer(Exercizer):
         '''
         Return generator with the list of blob names
         '''
-        return self.blob_service.list_blobs(container_name)
+        return self.storage_client.list_blobs(container_name)
         
     def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
         dic_downloadData = {}
@@ -42,13 +42,13 @@ class AzureExercizer(Exercizer):
         for aBlob in blobListGenerator:
             self.startTimer()
             localPath = join(localDir,aBlob.name)
-            self.blob_service.get_blob_to_path(container_name, aBlob.name, localPath )
+            self.storage_client.get_blob_to_path(container_name, aBlob.name, localPath )
             dic_downloadData[localPath] = (self.endTimer(), getsize(localPath))
         return dic_downloadData
 
     def DeleteContainer(self, container_name='blobtester'):
         self.startTimer()
-        self.blob_service.delete_container(container_name)
+        self.storage_client.delete_container(container_name)
         return {container_name: self.endTimer(), 'operation':'Deleted'}
     
 

@@ -4,7 +4,7 @@ import google.cloud.storage
 from exercizer import Exercizer
 from traceback import format_exc
 class GCPExercizer(Exercizer):
-    def __init__(self, region_name = 'northamerica-northeast1', storage_class = 'REGIONAL'):
+    def __init__(self, region_name = 'us-east1', storage_class = 'REGIONAL'):
         Exercizer.__init__(self)
         self.storage_client = google.cloud.storage.Client()
         self.region_name = region_name
