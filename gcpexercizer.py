@@ -15,6 +15,7 @@
 import os, sys, time
 from os.path import join, getsize, exists
 import google.cloud.storage
+import pickle
 from pprint import pprint
 from exercizer import Exercizer
 from traceback import format_exc
@@ -90,8 +91,8 @@ if __name__=="__main__":
 
     gcpex = GCPExercizer()
     # Upload
-    pprint(gcpex.UploadObjectsToContainer())
+    pickle.dump(gcpex.UploadObjectsToContainer(), open('/tmp/outputdata/objbench/gcp_upload.pkl','wb'))
     # Download
-    pprint(gcpex.DownloadObjectsFromContainer())
+    pickle.dump(gcpex.DownloadObjectsFromContainer(), open('/tmp/outputdata/objbench/gcp_download.pkl','wb'))
     # Delete
     pprint(gcpex.DeleteContainer())

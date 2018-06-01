@@ -17,7 +17,7 @@ from os.path import join, getsize ,exists
 class Exercizer(object):
     def __init__(self):
         self.resetTimer()
-
+        
     def makeRandomBinFiles (self, outDir='/tmp/smalldir', numFiles=10, 
         minSizekb=1, maxSizekb = 1000001):
         if not exists(outDir):

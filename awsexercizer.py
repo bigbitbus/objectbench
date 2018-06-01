@@ -19,7 +19,7 @@ from botocore.client import ClientError
 from exercizer import Exercizer
 from traceback import format_exc
 from pprint import pprint
-
+import pickle
 class AWSExercizer(Exercizer):
     def __init__(self, region_name ='us-east-1'):
         Exercizer.__init__(self)
@@ -103,11 +103,15 @@ if __name__=="__main__":
     }
     awsex = AWSExercizer()
     # Upload
-    print "Upload objects"
-    pprint(awsex.UploadObjectsToContainer())
+ #   print "Upload objects"
+ #   pprint(awsex.UploadObjectsToContainer())
     # Download
-    print "Download objects"
-    pprint(awsex.DownloadObjectsFromContainer())
+ #   print "Download objects"
+ #   pprint(awsex.DownloadObjectsFromContainer())
     # Delete
+  
+    pickle.dump(awsex.UploadObjectsToContainer(), open('/tmp/outputdata/objbench/aws_upload.pkl','wb'))
+    # Download
+    pickle.dump(awsex.DownloadObjectsFromContainer(), open('/tmp/outputdata/objbench/aws_download.pkl','wb'))
     print "Delete buckets"
     pprint(awsex.DeleteContainer())

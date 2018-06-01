@@ -17,7 +17,7 @@ from os.path import join, getsize, exists
 from azure.storage.blob import BlockBlobService
 from pprint import pprint
 from exercizer import Exercizer
-
+import pickle
 class AzureExercizer(Exercizer):
     def __init__(self, env_credentials):
         Exercizer.__init__(self)
@@ -79,8 +79,13 @@ if __name__=="__main__":
 
     azex = AzureExercizer(env_credentials)
     # Upload
-    pprint(azex.UploadObjectsToContainer())
+#    pprint(azex.UploadObjectsToContainer())
     # Download
-    pprint(azex.DownloadObjectsFromContainer())
+#    pprint(azex.DownloadObjectsFromContainer())
+    
+    pickle.dump(azex.UploadObjectsToContainer(), open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
+    # Download
+    pickle.dump(azex.DownloadObjectsFromContainer(), open('/tmp/outputdata/objbench/az_download.pkl','wb'))
+
     # Delete
     pprint(azex.DeleteContainer())
