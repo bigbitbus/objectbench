@@ -52,3 +52,5 @@ Delete buckets
 (objbench) root@sachin-udtp:~/bbbcode/objbench#
 
 ```
+
+In the above run each uploaded file/downloaded object has a tuple (time in seconds, bytes).
