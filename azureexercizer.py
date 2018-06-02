@@ -83,9 +83,9 @@ if __name__=="__main__":
     # Download
 #    pprint(azex.DownloadObjectsFromContainer())
     
-    pickle.dump(azex.UploadObjectsToContainer(), open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
+    pickle.dump(azex.UploadObjectsToContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
     # Download
-    pickle.dump(azex.DownloadObjectsFromContainer(), open('/tmp/outputdata/objbench/az_download.pkl','wb'))
+    pickle.dump(azex.DownloadObjectsFromContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/az_download.pkl','wb'))
 
     # Delete
     pprint(azex.DeleteContainer())

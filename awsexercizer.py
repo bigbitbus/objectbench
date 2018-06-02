@@ -110,8 +110,8 @@ if __name__=="__main__":
  #   pprint(awsex.DownloadObjectsFromContainer())
     # Delete
   
-    pickle.dump(awsex.UploadObjectsToContainer(), open('/tmp/outputdata/objbench/aws_upload.pkl','wb'))
+    pickle.dump(awsex.UploadObjectsToContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/aws_upload.pkl','wb'))
     # Download
-    pickle.dump(awsex.DownloadObjectsFromContainer(), open('/tmp/outputdata/objbench/aws_download.pkl','wb'))
+    pickle.dump(awsex.DownloadObjectsFromContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/aws_download.pkl','wb'))
     print "Delete buckets"
     pprint(awsex.DeleteContainer())
