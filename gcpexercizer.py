@@ -27,7 +27,6 @@ class GCPExercizer(Exercizer):
         self.storage_class = storage_class
 
     def UploadObjectsToContainer(self, container_name='blobtester', localDir = '/tmp/smalldir'):
-        print "Using localDir {}".format(localDir)
         try:
             container = self.storage_client.bucket(container_name)
             container.location = self.region_name
@@ -61,7 +60,6 @@ class GCPExercizer(Exercizer):
         return bucket.list_blobs()
         
     def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
-        print "Using localDir {}".format(localDir)
         if not exists(localDir):
             os.makedirs(localDir)
         dic_downloadData = {}
@@ -90,7 +88,6 @@ if __name__=="__main__":
     # For GCE, there are no credentials to read in. The sdk driver itself
     # uses the json credentials file pointed to by the 
     # GOOGLE_APPLICATION_CREDENTIALS OS environment variable
-    print sys.argv
     gcpex = GCPExercizer()
     # Upload
     pickle.dump(gcpex.UploadObjectsToContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/gcp_upload.pkl','wb'))

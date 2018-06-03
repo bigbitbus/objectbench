@@ -58,7 +58,7 @@ class AzureExercizer(Exercizer):
         dic_downloadData['_listObjectsInContainer'] = (self.endTimer(), "Container objects listing time") 
         for aBlob in blobListGenerator:
             self.startTimer()
-            localPath = join(localDir,aBlob.name)
+            localPath = join(localDir,aBlob.name.split('/')[-1])
             self.storage_client.get_blob_to_path(container_name, aBlob.name, localPath )
             dic_downloadData[localPath] = (self.endTimer(), getsize(localPath))
         return dic_downloadData

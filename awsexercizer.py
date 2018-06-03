@@ -79,7 +79,7 @@ class AWSExercizer(Exercizer):
         dic_downloadData['_listObjectsInContainer'] = (self.endTimer(), "Container objects listing time") 
         for aBlob in blobList:
             self.startTimer()
-            localPath = join(localDir,aBlob['Key'])
+            localPath = join(localDir,aBlob['Key'].split('/')[-1])
             self.storage_client.download_file(container_name, aBlob['Key'], localPath)
             dic_downloadData[localPath] = (self.endTimer(), getsize(localPath))
         return dic_downloadData
