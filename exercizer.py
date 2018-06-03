@@ -14,6 +14,7 @@
 
 import os, time
 from os.path import join, getsize ,exists
+from traceback import format_exc
 class Exercizer(object):
     def __init__(self):
         self.resetTimer()
@@ -22,7 +23,8 @@ class Exercizer(object):
         outDir='/tmp/smalldir', 
         numFiles=10, 
         minSizekb=1, 
-        maxSizekb = 1000001):
+        maxSizekb = 1000001,
+        fnPrefix = 'file_'):
         
         if not exists(outDir):
             os.makedirs(outDir)
@@ -30,7 +32,7 @@ class Exercizer(object):
         while ctr <= numFiles:
             try:
                 fileSize = max( 1, ctr * (maxSizekb - minSizekb)/numFiles)
-                with open(join(outDir,'file_'+ str(fileSize)), 'wb') as fout:
+                with open(join(outDir,fnPrefix + str(fileSize)), 'wb') as fout:
                     fout.write(os.urandom(fileSize*1000)) 
                 ctr = ctr + 1
             except:
