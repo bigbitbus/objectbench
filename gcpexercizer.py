@@ -70,7 +70,7 @@ class GCPExercizer(Exercizer):
         dic_downloadData['_listObjectsInContainer'] = (self.endTimer(), "Container objects listing time") 
         for aBlob in blobListGenerator:
             self.startTimer()
-            localPath = join(localDir,aBlob.name)
+            localPath = join(localDir,aBlob.name.split('/')[-1])
             aBlob.download_to_filename(localPath)
             dic_downloadData[localPath] = (self.endTimer(), getsize(localPath))
         return dic_downloadData
