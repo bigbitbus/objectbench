@@ -18,7 +18,18 @@ from traceback import format_exc
 class Exercizer(object):
     def __init__(self):
         self.resetTimer()
-        
+    
+    def makeOneRandomBinFile (self, 
+        filePath ='/tmp/file',
+        sizeinkb = 100,
+        ):
+        try:    
+            with open(filePath, 'wb') as fout:
+                fout.write(os.urandom(sizeinkb*1000)) 
+        except:
+            print "Error creating {} of size {}".format(filePath,sizeinkb)
+            print format_exc()
+
     def makeRandomBinFiles (self, 
         outDir='/tmp/smalldir', 
         numFiles=10, 
@@ -32,8 +43,7 @@ class Exercizer(object):
         while ctr <= numFiles:
             try:
                 fileSize = max( 1, ctr * (maxSizekb - minSizekb)/numFiles)
-                with open(join(outDir,fnPrefix + str(fileSize)), 'wb') as fout:
-                    fout.write(os.urandom(fileSize*1000)) 
+                self.makeOneRandomBinFile(join(outDir,fnPrefix + str(fileSize)), fileSize)
                 ctr = ctr + 1
             except:
                 print "Error creating random files"
