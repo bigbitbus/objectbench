@@ -12,22 +12,26 @@
   # See the License for the specific language governing permissions and
   # limitations under the License.
 
-import os, time
+import os, time, uuid
 from os.path import join, getsize ,exists
 from traceback import format_exc
 class Exercizer(object):
-    def __init__(self):
+    def __init__(self, filesSizeskb, localDir, numIters):
         self.resetTimer()
-    
+        self.fileSizeskb = filesSizeskb
+        self.localDir = localDir
+        self.numIters = int(numIters)
+        self.uploadManifest()
+
     def makeOneRandomBinFile (self, 
         filePath ='/tmp/file',
-        sizeinkb = 100,
+        sizeinbytes = 100,
         ):
         try:    
             with open(filePath, 'wb') as fout:
-                fout.write(os.urandom(sizeinkb*1000)) 
+                fout.write(os.urandom(sizeinbytes)) 
         except:
-            print "Error creating {} of size {}".format(filePath,sizeinkb)
+            print "Error creating {} of size {}".format(filePath, sizeinbytes)
             print format_exc()
 
     def makeRandomBinFiles (self, 
@@ -61,4 +65,12 @@ class Exercizer(object):
         timeElapsed = time.time() - self.startTime
         self.startTime = -1
         return (timeElapsed)
+
+    def uploadManifest(self):
+        self.manifest = []
+        for ii in range(0, self.numIters):
+            for fSizekb in self.fileSizeskb:
+                intfilesize = int(fSizekb)*1000
+                filePath = join(self.localDir,str(uuid.uuid4()))
+                self.manifest.append((filePath, intfilesize))
 

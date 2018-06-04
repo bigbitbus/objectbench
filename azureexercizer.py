@@ -12,61 +12,88 @@
   # See the License for the specific language governing permissions and
   # limitations under the License.
 
-import os, sys, time
+import os, sys, time, pickle
 from os.path import join, getsize, exists
 from azure.storage.blob import BlockBlobService
 from pprint import pprint
 from exercizer import Exercizer
-import pickle
-class AzureExercizer(Exercizer):
-    def __init__(self, env_credentials):
-        Exercizer.__init__(self)
+from traceback import format_exc
+class AzureExercizer(Exercizer): #No easy way of getting auto regions
+    def __init__(
+        self, 
+        env_credentials,
+        container_name='blobtester',
+        fileSizeskb = [],
+        localDir= '/tmp/self.localDir',
+        numIters = 1):
+        Exercizer.__init__(
+            self,
+            fileSizeskb,
+            localDir,
+            numIters)
+
         self.storage_client = BlockBlobService(
             os.environ.get(env_credentials['account']), 
             os.environ.get(env_credentials['secret']))
+        self.container_name = container_name
 
-    def UploadObjectsToContainer(self, container_name='blobtester', localDir = '/tmp/smalldir'):
-        self.storage_client.create_container(container_name)
-        dic_uploadData = {}
-        for root, dirs, files in os.walk(localDir):
-            for name in files:
-                filePath = join(root,name)
-                self.startTimer()
-                try:
-                    self.storage_client.create_blob_from_path(container_name, 
-                        name, filePath)
-                    dic_uploadData[filePath] = (self.endTimer(), getsize(filePath))
-                except:
-                    print ('Failure uploading {}'.format(filePath))
-                    print (format_exc())
-                    self.endTimer()
-                    dic_uploadData[filePath] = -1   
-        return dic_uploadData
-
-    def ListObjectsInContainer(self, container_name = 'blobtester'):
-        '''
-        Return generator with the list of blob names
-        '''
-        return self.storage_client.list_blobs(container_name)
-        
-    def DownloadObjectsFromContainer(self, container_name = 'blobtester', localDir = '/tmp/smalldir'):
-        if not exists(localDir):
-            os.makedirs(localDir)
-        dic_downloadData = {}
-        self.startTimer()
-        blobListGenerator = self.ListObjectsInContainer(container_name)
-        dic_downloadData['_listObjectsInContainer'] = (self.endTimer(), "Container objects listing time") 
-        for aBlob in blobListGenerator:
+    def UploadObjectsToContainer(self):
+        self.storage_client.create_container(self.container_name)
+        list_uploadData = []
+        for eachFile in self.manifest:
+            filePath, intfilesize = eachFile
+            print "U",
+            print eachFile
+            self.makeOneRandomBinFile(filePath, intfilesize)
             self.startTimer()
-            localPath = join(localDir,aBlob.name.split('/')[-1])
-            self.storage_client.get_blob_to_path(container_name, aBlob.name, localPath )
-            dic_downloadData[localPath] = (self.endTimer(), getsize(localPath))
-        return dic_downloadData
+            try:
+                self.storage_client.create_blob_from_path(
+                    self.container_name, 
+                    filePath.split('/')[-1], 
+                    filePath)
+                list_uploadData.append( 
+                    (self.endTimer(), getsize(filePath), 'azure_upload'))
+            except:
+                print ('Failure uploading {}'.format(filePath))
+                print format_exc()
+                self.endTimer() 
+        return list_uploadData
+
+    def ListObjectsInContainer(self):
+        '''
+        Return list with the list of blob names
+        '''
+        return list(self.storage_client.list_blobs(self.container_name))
+        
+    def DownloadObjectsFromContainer(self):
+        if not exists(self.localDir):
+            os.makedirs(self.localDir)
+        list_downloadData = []
+        blobList = self.ListObjectsInContainer()
+        for aBlob in blobList:
+            self.startTimer()
+            localPath = join(self.localDir,aBlob.name.split('/')[-1])
+            self.storage_client.get_blob_to_path(
+                self.container_name, 
+                aBlob.name, 
+                localPath )
+            blobsize = getsize(localPath)
+            list_downloadData.append( 
+                (self.endTimer(), blobsize , 'azure_download'))
+            print "D",
+            print (localPath, blobsize)
+            os.remove(localPath)
+            self.startTimer()
+            self.storage_client.delete_blob(
+                self.container_name, aBlob.name)
+            list_downloadData.append( 
+                (self.endTimer(), blobsize , 'azure_delete'))    
+        return list_downloadData
 
     def DeleteContainer(self, container_name='blobtester'):
         self.startTimer()
-        self.storage_client.delete_container(container_name)
-        return {container_name: self.endTimer(), 'operation':'Deleted'}
+        self.storage_client.delete_container(self.container_name)
+        return {self.container_name: self.endTimer(), 'operation':'Deleted'}
     
 
 
@@ -77,15 +104,24 @@ if __name__=="__main__":
         'secret':'AZBLOBKEY'
     }
 
-    azex = AzureExercizer(env_credentials)
+    azex = AzureExercizer(
+        env_credentials,
+        localDir = sys.argv[1], 
+        numIters = sys.argv[2], 
+        fileSizeskb = sys.argv[3:])
     # Upload
 #    pprint(azex.UploadObjectsToContainer())
     # Download
 #    pprint(azex.DownloadObjectsFromContainer())
     
-    pickle.dump(azex.UploadObjectsToContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
+    pickle.dump(
+        azex.UploadObjectsToContainer(), 
+        open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
     # Download
-    pickle.dump(azex.DownloadObjectsFromContainer(localDir = sys.argv[1]), open('/tmp/outputdata/objbench/az_download.pkl','wb'))
+    pickle.dump(
+        azex.DownloadObjectsFromContainer(),
+        open('/tmp/outputdata/objbench/az_download.pkl','wb'))
 
     # Delete
+    print "Delete bucket"
     pprint(azex.DeleteContainer())
