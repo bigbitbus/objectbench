@@ -139,7 +139,8 @@ if __name__=="__main__":
         env_credentials = env_credentials,
         localDir = sys.argv[1], 
         numIters = sys.argv[2], 
-        fileSizeskb = sys.argv[3:])
+        fileSizeskb = sys.argv[3:],
+        region_name ='ca-central-1') # us-east-1
   
     pickle.dump(
         awsex.UploadObjectsToContainer(),

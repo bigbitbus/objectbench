@@ -110,7 +110,8 @@ if __name__=="__main__":
     gcpex = GCPExercizer(
         localDir = sys.argv[1], 
         numIters = sys.argv[2], 
-        fileSizeskb = sys.argv[3:])
+        fileSizeskb = sys.argv[3:],
+        region_name = 'northamerica-northeast1') # override 'us-east1'
     # Upload
     pickle.dump(
         gcpex.UploadObjectsToContainer(),

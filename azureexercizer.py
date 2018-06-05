@@ -100,8 +100,10 @@ class AzureExercizer(Exercizer): #No easy way of getting auto regions
 if __name__=="__main__":
     # These are names of the environmental variables (not the actual values)
     env_credentials = { 
-        'account': 'AZBLOBACCOUNT', 
-        'secret':'AZBLOBKEY'
+        #'account': 'AZBLOBACCOUNT', 
+        #'secret':'AZBLOBKEY' #us east
+        'account': 'AZBLOBACCOUNTCA', 
+        'secret':'AZBLOBKEYCA' #Canada
     }
 
     azex = AzureExercizer(
