@@ -102,8 +102,8 @@ if __name__=="__main__":
     env_credentials = { 
         #'account': 'AZBLOBACCOUNT', 
         #'secret':'AZBLOBKEY' #us east
-        'account': 'AZBLOBACCOUNTCA', 
-        'secret':'AZBLOBKEYCA' #Canada
+        'account': 'AZBLOBACCOUNT', 
+        'secret':'AZBLOBKEY' #Canada
     }
 
     azex = AzureExercizer(
