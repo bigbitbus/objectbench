@@ -27,7 +27,7 @@ class AWSExercizer(Exercizer):
         container_name='blobtester',
         fileSizeskb = [],
         localDir= '/tmp/localDir',
-        storageClass = 'STANDARD'
+        storageClass = 'STANDARD',
         numIters = 1):
         Exercizer.__init__(
             self,
