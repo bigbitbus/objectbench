@@ -27,6 +27,7 @@ class AWSExercizer(Exercizer):
         container_name='blobtester',
         fileSizeskb = [],
         localDir= '/tmp/localDir',
+        storageClass = 'STANDARD'
         numIters = 1):
         Exercizer.__init__(
             self,
@@ -36,7 +37,8 @@ class AWSExercizer(Exercizer):
         if region_name == 'us-east-1': # aws quirk - you can't specify us-east-1 explicitly
             self.storage_client = boto3.client('s3',
                 aws_access_key_id = os.environ.get(env_credentials['account']), 
-                aws_secret_access_key = os.environ.get(env_credentials['secret']))
+                aws_secret_access_key = os.environ.get(env_credentials['secret']),
+                )
         else:
             self.storage_client = boto3.client('s3',
                 aws_access_key_id = os.environ.get(env_credentials['account']), 
@@ -44,6 +46,7 @@ class AWSExercizer(Exercizer):
                 region_name=region_name)
         self.region_name = region_name
         self.container_name = container_name
+        self.storageClass = storageClass
             
 
     def UploadObjectsToContainer(self):
@@ -70,7 +73,10 @@ class AWSExercizer(Exercizer):
             self.startTimer()
             try:
                 self.storage_client.upload_file(
-                    filePath, self.container_name, filePath)
+                    filePath, self.container_name, filePath,
+                    ExtraArgs = {
+                        'StorageClass': self.storageClass}
+                    )
                 list_uploadData.append(
                     (self.endTimer(), getsize(filePath), 'aws_upload'))
             except:
@@ -137,17 +143,19 @@ if __name__=="__main__":
     }
     awsex = AWSExercizer(
         env_credentials = env_credentials,
-        localDir = sys.argv[1], 
-        numIters = sys.argv[2], 
-        fileSizeskb = sys.argv[3:],
+        localDir = sys.argv[1],
+        storageClass = sysm.argv[2],
+        numIters = sys.argv[3], 
+        fileSizeskb = sys.argv[4:],
         region_name ='ca-central-1') # us-east-1
   
     pickle.dump(
         awsex.UploadObjectsToContainer(),
             open('/tmp/outputdata/objbench/aws_upload.pkl','wb'))
     # Download
+    time.sleep(100)
     pickle.dump(
         awsex.DownloadObjectsFromContainer(), 
         open('/tmp/outputdata/objbench/aws_download.pkl','wb'))
-    print "Delete bucket"
+   # print "Delete bucket"
     pprint(awsex.DeleteContainer())

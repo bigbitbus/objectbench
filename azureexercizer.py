@@ -120,6 +120,7 @@ if __name__=="__main__":
         azex.UploadObjectsToContainer(), 
         open('/tmp/outputdata/objbench/az_upload.pkl','wb'))
     # Download
+    time.sleep(100)
     pickle.dump(
         azex.DownloadObjectsFromContainer(),
         open('/tmp/outputdata/objbench/az_download.pkl','wb'))

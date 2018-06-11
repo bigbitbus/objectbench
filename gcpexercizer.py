@@ -109,8 +109,9 @@ if __name__=="__main__":
     # GOOGLE_APPLICATION_CREDENTIALS OS environment variable
     gcpex = GCPExercizer(
         localDir = sys.argv[1], 
-        numIters = sys.argv[2], 
-        fileSizeskb = sys.argv[3:],
+        storage_class = sys.argv[2],
+        numIters = sys.argv[3], 
+        fileSizeskb = sys.argv[4:],
         region_name = 'northamerica-northeast1') # override 'us-east1'
     # Upload
     pickle.dump(
