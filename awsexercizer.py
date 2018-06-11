@@ -144,7 +144,7 @@ if __name__=="__main__":
     awsex = AWSExercizer(
         env_credentials = env_credentials,
         localDir = sys.argv[1],
-        storageClass = sysm.argv[2],
+        storageClass = sys.argv[2],
         numIters = sys.argv[3], 
         fileSizeskb = sys.argv[4:],
         region_name ='ca-central-1') # us-east-1
