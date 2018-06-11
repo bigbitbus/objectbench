@@ -118,6 +118,7 @@ if __name__=="__main__":
         gcpex.UploadObjectsToContainer(),
         open('/tmp/outputdata/objbench/gcp_upload.pkl','wb'))
     # Download
+    time.sleep(100)
     pickle.dump(
         gcpex.DownloadObjectsFromContainer(),
         open('/tmp/outputdata/objbench/gcp_download.pkl','wb'))
