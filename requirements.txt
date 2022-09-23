@@ -104,7 +104,7 @@ msrest==0.4.29
 msrestazure==0.4.31
 oauthlib==2.1.0
 pathlib2==2.3.2
-protobuf==3.5.2.post1
+protobuf==3.18.3
 pyasn1==0.4.3
 pyasn1-modules==0.2.1
 pycparser==2.18
